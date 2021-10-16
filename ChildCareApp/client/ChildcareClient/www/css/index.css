@@ -26,7 +26,33 @@ body {
   width: 100%;
 }
 
+.lable-left {
+  float: left;
+  width: 125px;
+  text-align: right;
+  margin: 2px 10px;
+  display: inline;
+}
 
+.table{
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table td,
+.table th{
+  padding: 10px 12px;
+  border: 1px solid slategray;
+  font-size: 16px;
+}
+
+.table th{
+  font-weight: bold;
+}
+
+.table tbody tr:nth-child(even){
+background-color: #f5f5f5;
+}
 
 .center-form{
     margin: 0 auto;
@@ -111,6 +137,8 @@ button {
   margin-right: 20px;
 }
 
+
+
 /* Landscape layout (with min-width) */
 @media screen and (min-aspect-ratio: 1/1) and (min-width: 400px) {
   .app {
@@ -121,13 +149,41 @@ button {
   }
 }
 
+.table thead{
+  display: none;
+}
+
+.table,
+.table tbody, 
+.table tr,
+.table td{
+  display: block;
+  width: 90%;
+  border-color:transparent;
+}
+.table tr{
+  margin-bottom: 12px;
+}
+.table td{
+  padding-left: 30%;
+  position: relative;
+}
+.table td::before{
+  content: attr(data-label);
+  position: absolute;
+  left: 0;
+  width: 70%;
+  padding-left: 10px;
+  font-size:14px;
+  text-align: left;
+}
 h1 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: normal;
   margin: 0px;
   overflow: visible;
   padding: 0px;
-  text-align: center;
+  text-align: left;
 }
 
 .event {

@@ -18,14 +18,31 @@
 </head>
 
 <body>
+
+        
+        <div data-role="page" id="login">
+            <div data-role="header">
+                <h1 class="header-heading">Childcare Login</h1>
+            </div>
+            <div class="btnContainer" id="btnLoginContainer">
+                <button id='educator-login' data-login='saajidh.nizam@cqumail.com'> Educator Login</button>
+                <button id='parent-login' data-login='saajidhnizam23@gmail.com'> Parent Login </button>
+            </div>
+        </div>
+    
+        <div data-role="footer">
+            <h4>Childcare app</h4>
+        </div> 
+        </div>
+    
     <!-- /page --------------------------------------------------------->
     <div data-role="page" id="home">
         <div data-role="header">
-            <h1 class="header-heading">Childcare - Educator</h1>
+            <h1 class="header-heading">Educator Board</h1>
             <div>
                 <div class="ui-btn-right">
-                    <p class="username-lable">Admin</p>
-                    <p class="user-lable">Admin</p>
+                    <p id="username-lable" class="username-lable">Admin</p>
+                    <p id="user-lable" class="user-lable">log Out</p>
                 </div>
             </div>
         </div><!-- /header -->
@@ -110,37 +127,85 @@
     </div><!-- /content -->
 
     <div data-role="footer">
-        <h4>Page Footer</h4>
+        <h4>Childcare app</h4>
     </div><!-- /footer -->
     </div><!-- /page -->
     <!-- /page --------------------------------------------------------->
 
-    <div data-role="page" id="dataCloud">
 
-        <div data-role="header" data-add-back-btn="true">
-            <h1>CLOUD DATA</h1>
+    <div data-role="page" id="parenthome" >
+  
+        <div data-role="header">
+            <h1 class="header-heading">Parent Board</h1>
         </div><!-- /header -->
-        <div data-role="content">
-            <table id="album-tbl-cloud" class="table">
-                <thead id='album-tbl-thead'>
-                    <th>Cover</th>
-                    <th>Id</th>
-                    <th>Artist</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Review</th>
-                </thead>
-                <tbody id='album-tbl-body-cloud'>
-                    <!---->
-                </tbody>
-            </table>
-        </div>
-    </div><!-- /content -->
+      
+        <div data-role="content">	 
+            <div class="ui-grid-b ui-responsive">
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c lable-text">Child Name</div>
+                </div>
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c">
+                        <div id="pchild-name"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-b ui-responsive">
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c lable-text">Child Room</div>
+                </div>
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c">
+                        <div id="pchild-room"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-b ui-responsive">
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c lable-text">Parent</div>
+                </div>
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c">
+                        <div id="pchild-parent"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-b ui-responsive">
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c lable-text">Educator</div>
+                </div>
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c">
+                        <div id="pchild-educator"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-b ui-responsive">
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c lable-text">Learning Reflections</div>
+                </div>
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c">
+                        <div id="pchild-reflections"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-grid-b ui-responsive">
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c lable-text">Image</div>
+                </div>
+                    <div class="ui-block-c">
+                    <div class="ui-bar ui-bar-c">
+                        <div id="pchild-images"></div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /content -->
+      
+        <div data-role="footer">
+          <h4>Page Footer</h4>
+        </div><!-- /footer -->
 
-    <div data-role="footer">
-        <h4>Group Brisbane</h4>
-    </div><!-- /footer -->
-    </div>
     <!-- /page --------------------------------------------------------->
     <script src="cordova.js"></script>
 

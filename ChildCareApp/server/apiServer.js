@@ -33,7 +33,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 let currCollection;
 let collectionChildren;
 
-
+// this fuction reterive the children for an educator
 async function retriveChildren(eduFilter) {
 	try {
 		// create an instance of MongoClient
@@ -49,6 +49,29 @@ async function retriveChildren(eduFilter) {
 		collectionChildren = childCollectionCurser;
 		console.log(`The children of the a ${eduFilter} retrived successfully`);
 		client.close();
+	} catch (e) {
+		console.error("Error detected:" + e);
+	}
+}
+
+var dailyReflectionItem;
+async function retriveDailyRefelections(parentId) {
+	try {
+		// create an instance of MongoClient
+		const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+		await client.connect(); // client.connect() returens a promise so await hold the operations from further exicuting
+		const dailyReflectionCollectionCurser = await client
+			.db("ChildCareDatabase")
+			.collection("DailyRefeletions")
+			.findOne({
+				"parent.email": { $eq: parentId }
+			});
+		
+		console.log(`The daily reflections of the a ${parentId} retrived successfully`);
+		console.log(dailyReflectionCollectionCurser);
+		client.close();
+		dailyReflectionItem = dailyReflectionCollectionCurser;
+		
 	} catch (e) {
 		console.error("Error detected:" + e);
 	}
@@ -75,7 +98,27 @@ async function retriveChildrenId(childFilter) {
 	}
 }
 
+// This funtion insert the daily reflections sent by the educators
+async function insertDailyReflection(reflection){
+	try {
+		// create an instance of MongoClient
+		const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+		await client.connect(); // client.connect() returens a promise so await hold the operations from further exicuting
+		const childCollectionCurser = await client
+			.db("ChildCareDatabase")
+			.collection("DailyRefeletions")
+			.insertOne(reflection);
+			client.close();
+		}
+		catch(e){
+			console.error("Error detected:" + e);
+		}
+}
 
+
+/*
+APIs 
+*/
 app.get('/children/:educator', cors(), (req, res) => {
 	var eduFilter = req.params.educator
 	retriveChildren(eduFilter);
@@ -87,6 +130,7 @@ app.get('/children/id/:id', cors(), (req, res) => {
 	//console.log(childIdFilter);
 	var childdetails = retriveChildrenId(childIdFilter);
 	console.log("Retrive the child details successful");
+	
 	res.send(childObj)
 })
 
@@ -109,12 +153,24 @@ app.post("/img", cors(), (req, res) => {
 	res.json({"imageurl": imgULI});
 })
 
+app.get("/dailyreflections/parent/:id", cors(), (req, res) => {
+
+	var parentId = req.params.id;
+	retriveDailyRefelections(parentId);
+	//console.log(JSON.stringify(dailyReflectionItem));
+	setTimeout((() => {
+		res.json(dailyReflectionItem);
+	  }), 3000);	
+})
+
 app.post("/dailyreflections", cors(), (req, res) => {
 
-	console.log(req.body);
+	insertDailyReflection(req.body);
+	res.send("Daily Reflecton is inserted to the databse");
 	
 })
 
+//Post listing
 app.listen(port, baseURL, () => {
-	console.log(`Childcare app listening at http://localhost:${port}`)
+	console.log(`Childcare app listening at http://${baseURL}:${port}`)
 })

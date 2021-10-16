@@ -1,4 +1,5 @@
 var serverIP = "192.168.0.100"; // This is the local computer IP
+var port = "3000";
 
 //This method created the button from the approriate children
 async function createButton(textBtn, childid) {
@@ -12,15 +13,18 @@ async function createButton(textBtn, childid) {
 }
 
 // This variable hold the username of the eduactor. ****take from login*****
-var educatorUsername = "saajidh.nizam@cqumail.com";
+//var educatorUsername = loginUser;
 var childrenReflectionArrayPassed = [];
 // this method fetch the details of the childrens an educator
-function fetchChildrenDetails() {
-  var childByEduURL = `http://${serverIP}:3000/children/${educatorUsername}`;
+function fetchChildrenDetails(educatorUsername) {
+  var childByEduURL = `http://${serverIP}:${port}/children/${educatorUsername}`;
   $.ajax({
     type: "GET",
     url: childByEduURL,
     dataType: "JSON",
+    beforeSend: function () {
+      $.mobile.loading("show");
+    },
     success: function (data) {
       if (data.length != 0) {
         storeChildrenDetails(data);
@@ -40,6 +44,9 @@ function fetchChildrenDetails() {
       } else {
         $("#btnContainer").append("<p>No children assign to you room</p>");
       }
+    },
+    complete: function () {
+      $.mobile.loading("hide");
     },
   });
 }
@@ -100,8 +107,6 @@ function prefillReflection(childobj) {
   var refEducatorName = childobj.Educator.Name;
   var refEducatorUserName = childobj.Educator.Username;
   //getJSON
-
-  var childRefObj;
   var childjson = $.getJSON(
     "js/dailyReflection.json",
     function (jsonRefelection) {
@@ -112,7 +117,7 @@ function prefillReflection(childobj) {
       jsonRefelection.childRoom = refChildRoom;
       jsonRefelection.educator.name = refEducatorName;
       jsonRefelection.educator.username = refEducatorUserName;
-      jsonRefelection.reflectionid = `${childId}${new Date().getTime()}`
+      jsonRefelection.reflectionid = `${childId}${new Date().getTime()}`;
       // Reflection Id is generated when the child checked in the childid_timecheckin
       if (localStorage.getItem(`${refchildId}`) === null) {
         localStorage.setItem(`${refchildId}`, JSON.stringify(jsonRefelection));
@@ -204,23 +209,40 @@ function storeDailyReflections(dailyReflection) {
 
 // this is the document.ready fuction handeles the button click events
 $(document).ready(function () {
-  fetchChildrenDetails();
+  //  dailyReflectionDisplay("6157f00c80342303d60d25c0");
+  $("#educator-login").on("click", function (e) {
+    $("body").pagecontainer("change", "#home", {
+      transition: "slide",
+    });
+    var loginUser = $("#educator-login").attr("data-login");
+    $("#username-lable").empty();
+    $("#username-lable").append(loginUser);
+    fetchChildrenDetails(loginUser);
+  });
+
+  $("#parent-login").on("click", function (e) {
+    $("body").pagecontainer("change", "#parenthome", {
+      transition: "slide",
+    });
+    var loginUser = $("#parent-login").attr("data-login");
+    $("#username-lable").empty();
+    $("#username-lable").append(loginUser);
+    dailyReflectionDisplay(loginUser);
+  });
 
   $("#btnContainer").on("click", "#childBtn", function () {
     $("body").pagecontainer("change", "#daily-reflections-page", {
       transition: "slide",
-    });
+    }, 3000);
 
-    // read the data values in the data attritute to fetch the each child a auctaor list
+    // read the data values in the data attritute to fetch the each child a eductaor list
     // this helps to populate the each child details for create each page for eachild each day
     var childId = $(this).attr("data-index-number");
     fetchChildrenDetailsById(childId);
   });
 
-
   //Save the daily refelection of the child
   $("#save-button").on("click", function () {
-    
     var childIDsave = $("#save-button").attr("data-index-number");
     var reflectionMessage = $("#textarea_lerning_reflection").val();
     console.log(reflectionMessage);
@@ -239,17 +261,77 @@ $(document).ready(function () {
     }
   });
 
-
   //Save the daily refelection of the child
   $("#send-button").on("click", function () {
-    
     var childIDsave = $("#send-button").attr("data-index-number");
-    
+
     var childJsonFromID = localStorage.getItem(childIDsave);
     var childJsonFromIDObj = JSON.parse(childJsonFromID);
-    
+
+    var settings = {
+      url: `http://${serverIP}:${port}/dailyreflections`,
+      method: "POST",
+      timeout: 0,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(childJsonFromIDObj),
+    };
+
+    $.ajax(settings).done(function (response) {
+      console.log(response);
+      alert(response);
+    });
   });
 
+  function addImages(pictures){
+    for(var pictureindex = 0; pictureindex < pictures.length; pictureindex++ ){
+      var pictureurl = pictures[pictureindex];
+      $("#pchild-images").append(`<img src="${pictureurl}"  width='300'>`)
+     // console.log(pictureurl);
+    }
+  }
+
+  /*
+  This fuction fetch the latest daily reflection from the database
+   */
+  function dailyReflectionDisplay(parentId) {
+    var dailyReflection = `http://${serverIP}:${port}/dailyreflections/parent/${parentId}`;
+    var lerningReflectionhtml;
+    $.ajax({
+      type: "GET",
+      url: dailyReflection,
+      dataType: "JSON",
+      timeout:4000,
+      beforeSend: function () {
+        $.mobile.loading("show");
+      },
+      success: function (data) {
+
+        console.log(data.educator.name);
+        addImages(data.pictures);
+
+        $("#pchild-name").empty();
+        $("#pchild-name").append(data.childName);
+        $("#pchild-room").empty();
+        $("#pchild-room").append(data.childRoom);
+        $("#pchild-parent").empty();
+        $("#pchild-parent").append(data.parent.name);
+        $("#pchild-educator").empty();
+        $("#pchild-educator").append(data.educator.name);
+        $("#pchild-reflections").empty();
+        $("#pchild-reflections").append(data.learningReflections);
+        $("#pchild-images").empty();
+        $("#pchild-images").append(addImages(data.pictures));
+        
+      },
+      complete: function () {
+        console.log(lerningReflectionhtml);
+
+        $.mobile.loading("hide");
+      },
+    });
+  }
 
   //this method used to encode the Base64 image file
   function encodeBase64(image) {
